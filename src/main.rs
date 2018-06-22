@@ -1,15 +1,15 @@
 #[derive(PartialEq, Copy, Clone, Debug)]
-enum Facing {
-    LeftToRight,
-    RightToLeft,
+enum Direction {
+    Right,
+    Left,
 }
 
-impl Facing {
+impl Direction {
     fn swap_direction(self) -> Self {
-        use Facing;
+        use Direction;
         match self {
-            Facing::LeftToRight => Facing::RightToLeft,
-            Facing::RightToLeft => Facing::LeftToRight
+            Direction::Right => Direction::Left,
+            Direction::Left => Direction::Right
         }
     }
 }
@@ -25,24 +25,24 @@ fn factorial(n: usize) -> usize {
 fn find_largest_mobile(p: &[usize], mobile: usize) -> usize {
     for (i, &v) in p.iter().enumerate() {
         if v == mobile {
-            return i + 1;
+            return i;
         }
     }
     0
 }
 
-fn get_mobile(p: &[usize], dirs: &[Facing]) -> usize {
-    use Facing::*;
+fn get_mobile(p: &[usize], dirs: &[Direction]) -> usize {
+    use Direction::*;
     let mut mobile = 0;
     let mut previous_mobile = 0;
     for i in 0..p.len() {
-        if dirs[p[i] - 1] == RightToLeft && i != 0             
+        if dirs[p[i]] == Left && i != 0
             && p[i - 1] < p[i] && previous_mobile < p[i] {
             mobile = p[i];
             previous_mobile = mobile;
         }
 
-        if dirs[p[i] - 1] == LeftToRight && i != p.len() - 1             
+        if dirs[p[i]] == Right && i != p.len() - 1
             && p[i + 1] < p[i] && previous_mobile < p[i] {
             mobile = p[i];
             previous_mobile = mobile;
@@ -51,17 +51,17 @@ fn get_mobile(p: &[usize], dirs: &[Facing]) -> usize {
     if mobile == 0 && previous_mobile == 0 { 0 } else { mobile }
 }
 
-fn print_permutation(p: &mut [usize], dirs: &mut [Facing]) {
-    use Facing::*;
+fn print_permutation(p: &mut [usize], dirs: &mut [Direction]) {
+    use Direction::*;
     let mobile = get_mobile(p, dirs);
     let pos = find_largest_mobile(p, mobile);
-    match dirs[p[pos - 1] - 1] {
-        RightToLeft => p.swap(pos - 1, pos - 2),
-        LeftToRight => p.swap(pos - 1, pos),
+    match dirs[p[pos]] {
+        Left => p.swap(pos, pos - 1),
+        Right => p.swap(pos, pos + 1),
     }
     for &v in p.iter() {
         if mobile < v {
-            dirs[v - 1] = dirs[v - 1].swap_direction();
+            dirs[v] = dirs[v].swap_direction();
         }
     }
     println!("{:?}", p);
@@ -69,7 +69,7 @@ fn print_permutation(p: &mut [usize], dirs: &mut [Facing]) {
 
 fn print_all_permutations(n: usize) {
     let mut p = (0..n).collect::<Vec<_>>();
-    let mut dirs = vec![Facing::RightToLeft; n];
+    let mut dirs = vec![Direction::Left; n];
     println!("{:?}", p);
     for _ in 1..factorial(n) {
         print_permutation(&mut p, &mut dirs);
