@@ -51,7 +51,7 @@ fn get_mobile(p: &[usize], dirs: &[Direction]) -> usize {
     if mobile == 0 && previous_mobile == 0 { 0 } else { mobile }
 }
 
-fn print_permutation(p: &mut [usize], dirs: &mut [Direction]) {
+fn find_next_permutation(p: &mut [usize], dirs: &mut [Direction]) {
     use Direction::*;
     let mobile = get_mobile(p, dirs);
     let pos = find_largest_mobile(p, mobile);
@@ -64,7 +64,7 @@ fn print_permutation(p: &mut [usize], dirs: &mut [Direction]) {
             dirs[v] = dirs[v].swap_direction();
         }
     }
-    println!("{:?}", p);
+
 }
 
 fn print_all_permutations(n: usize) {
@@ -72,11 +72,12 @@ fn print_all_permutations(n: usize) {
     let mut dirs = vec![Direction::Left; n];
     println!("{:?}", p);
     for _ in 1..factorial(n) {
-        print_permutation(&mut p, &mut dirs);
+        find_next_permutation(&mut p, &mut dirs);
+        println!("{:?}", p);
     }
 }
 
-static USAGE_TEXT: &'static str = "Prints all permutations of the numbers 1 to n.\n Usage: permutations n";
+static USAGE_TEXT: &'static str = "Prints all permutations of the sequence of numbers from 0 to n - 1.\n Usage: permutations n";
 
 fn main() {
     use std::str::FromStr;
